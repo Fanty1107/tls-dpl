@@ -80,5 +80,35 @@ if (start_index >= argc) {
         }
     }
     return frase;
+}
+ const char* get_api() {
+    const char *api_key_env = getenv("DEEPL_AUTH_KEY");
+    if (api_key_env != NULL && strlen(api_key_env) > 0) {
+        return api_key_env;
+    }
+    const char *home_dir = getenv("HOME"); 
+    if (home_dir == NULL) {
+        fprintf(stderr, "Erro: Var HOME not defined.\n");
+        return NULL;
+    }
+    char filepath[512];
+    snprintf(filepath, sizeof(filepath), "%s/.deepl_cli", home_dir);
 
+    FILE *file = fopen(filepath, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Error: API Key not found.\n");
+        fprintf(stderr, "Define DEEPL_AUTH_KEY ou create the file %s\n", filepath);
+        fprintf(stderr, "You probably do this: echo \"api_key\" >> ~/.deepl_cli ");
+        return NULL;
+    }
+
+    static char api_key_file[256]; 
+    
+    if (fgets(api_key_file, sizeof(api_key_file), file) != NULL) {
+        api_key_file[strcspn(api_key_file, "\r\n")] = '\0';
+    } else {
+        api_key_file[0] = '\0'; 
+    }
+    fclose(file);
+    return strlen(api_key_file) > 0 ? api_key_file : NULL;
 }

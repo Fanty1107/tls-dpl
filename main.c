@@ -7,9 +7,8 @@
 
 //compile with -lcurl and dont forget your api_key
 int main(int argc, char *argv[]) {
-    const char *api_key = getenv("DEEPL_AUTH_KEY");
-    if (api_key == NULL || api_key[0] == '\0') {
-        fprintf(stderr, "Define env DEEPL_AUTH_KEY.\n");
+    const char *api_key = get_api();
+    if (api_key == NULL) {
         return 1;
     }
     if(argc < 2){
